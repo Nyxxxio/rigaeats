@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 7.5%; /* bg-[#121212] */
+    --foreground: 0 0% 80.4%; /* text-gray-300 */
+
+    --card: 0 0% 7.5%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 7.5%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 100%; /* white */
+    --primary-foreground: 0 0% 9%; /* black */
+
+    --secondary: 0 0% 9.4%; /* bg-[#181818] */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 22.7%; /* bg-[#3a3a3a] */
+    --muted-foreground: 0 0% 62.7%; /* text-gray-500 */
+
+    --accent: 0 0% 22.7%; /* bg-[#3a3a3a] */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 22.7%; /* border-gray-700 */
+    --input: 0 0% 22.7%; /* border-gray-600 */
+    --ring: 0 0% 100%; /* ring-white */
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+  .pattern-bg {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      hsl(var(--foreground) / 0.05) 1px,
+      transparent 0
+    );
+    background-size: 20px 20px;
+  }
+
+  .font-body {
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  .font-display,
+  .font-headline {
+    font-family: var(--font-playfair-display), serif;
+  }
+}
+
+/* Custom ShadCN Calendar Styles for Dark Theme */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-background-color: hsl(var(--accent));
+  --rdp-accent-color-dark: hsl(var(--primary));
+  --rdp-background-color-dark: hsl(var(--accent));
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 3px solid var(--rdp-accent-color);
+  --rdp-border-radius: var(--radius);
+}
+
+.rdp-day_selected,
+.rdp-day_selected:focus-visible,
+.rdp-day_selected:hover {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+    background-color: hsl(var(--accent) / 0.5);
+}

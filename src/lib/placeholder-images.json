@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A close-up of a tandoor oven, glowing with hot coals, used for making traditional Indian bread and dishes.",
+      "imageUrl": "https://images.unsplash.com/photo-1671507136750-05ebd0f97843?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0YW5kb29yfGVufDB8fHx8MTc1OTY2MDYxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tandoor oven"
+    },
+    {
+      "id": "menu-samosa",
+      "description": "Crispy pastry filled with spiced potatoes and peas.",
+      "imageUrl": "https://images.unsplash.com/photo-1625220194771-7ebdea0d3db3?q=80&w=2825&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "samosa appetizer"
+    },
+    {
+      "id": "menu-butter-chicken",
+      "description": "Tender chicken in a creamy, spiced tomato sauce.",
+      "imageUrl": "https://images.unsplash.com/photo-1588166524941-3bf61aaddc4a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "butter chicken"
+    },
+    {
+      "id": "menu-biryani",
+      "description": "Aromatic basmati rice cooked with mixed vegetables and fragrant spices.",
+      "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f39791e8?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "vegetable biryani"
+    }
+  ]
+}
