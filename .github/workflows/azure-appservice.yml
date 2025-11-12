@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: '18.x'
-  # You can set this as a repository variable or override at job level
+  NODE_VERSION: '20.x'
+  # Disable Next telemetry during CI
   NEXT_TELEMETRY_DISABLED: '1'
 
 jobs:
@@ -39,17 +39,17 @@ jobs:
       - name: Build
         env:
           NODE_ENV: production
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          AUTH_SECRET_PREV: ${{ secrets.AUTH_SECRET_PREV }}
-          AUTH_TOKEN_VERSION: ${{ secrets.AUTH_TOKEN_VERSION }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          DEFAULT_RESTAURANT_SLUG: ${{ secrets.DEFAULT_RESTAURANT_SLUG }}
-          GOOGLE_SERVICE_ACCOUNT_EMAIL: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
-          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
-          GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
         run: npm run build
+
+      - name: Prepare deployment package (Next.js standalone)
+        run: |
+          rm -rf out_azure
+          mkdir -p out_azure/.next
+          cp -r .next/standalone/* out_azure/
+          mkdir -p out_azure/.next
+          cp -r .next/static out_azure/.next/static
+          cp -r public out_azure/public || true
+          cp package.json out_azure/package.json
 
       - name: Archive production artifacts
         if: always()
@@ -70,7 +70,7 @@ jobs:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           # Publish profile stored as a secret from Azure Portal
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: .
+          package: out_azure
 
       - name: Post-deploy health check
         run: |
