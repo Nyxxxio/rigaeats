@@ -94,3 +94,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Bad request' }, { status: 400 });
   }
 }
+
+export const runtime = 'nodejs';

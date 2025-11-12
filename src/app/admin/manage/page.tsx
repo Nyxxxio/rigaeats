@@ -4,7 +4,7 @@ import { verifyToken, AdminTokenPayload } from '@/lib/auth';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { hashPassword } from '@/lib/password';
 
-export default async function AdminManagePage({ searchParams }: { searchParams?: Record<string, string | string[]> }) {
+export default async function AdminManagePage({ searchParams }: { searchParams?: Promise<Record<string, string | string[]>> }) {
   // server component guard: require admin auth
   const cookieStore = await cookies();
   const cookie = cookieStore.get('admin_auth')?.value;
@@ -13,9 +13,10 @@ export default async function AdminManagePage({ searchParams }: { searchParams?:
     redirect(`/login?next=/admin/manage`);
   }
 
-  const status = Array.isArray(searchParams?.status) ? searchParams?.status[0] : searchParams?.status;
-  const createdSlug = Array.isArray(searchParams?.slug) ? searchParams?.slug[0] : searchParams?.slug;
-  const createdUsername = Array.isArray(searchParams?.username) ? searchParams?.username[0] : searchParams?.username;
+  const sp = searchParams ? await searchParams : undefined;
+  const status = Array.isArray(sp?.status) ? sp?.status[0] : sp?.status;
+  const createdSlug = Array.isArray(sp?.slug) ? sp?.slug[0] : sp?.slug;
+  const createdUsername = Array.isArray(sp?.username) ? sp?.username[0] : sp?.username;
 
   return (
     <div className="min-h-screen p-8">

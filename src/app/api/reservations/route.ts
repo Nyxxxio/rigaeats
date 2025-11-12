@@ -4,6 +4,7 @@ import {sendConfirmationEmail} from '@/lib/email';
 import { createCalendarEvent } from '@/lib/google-calendar';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { verifyToken } from '@/lib/auth';
+import { rateLimitCheck, rateLimitFail, rateLimitSuccess } from '@/lib/rate-limit';
 
 // Define the operating hours and capacity
 const operatingHours = {
@@ -104,6 +105,15 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
+    // Basic per-IP rate limit to mitigate spam/abuse of reservation creation
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || (req as any).ip || 'unknown';
+    const rlKey = `reservation:${ip}`;
+    const rlCheck = await rateLimitCheck(rlKey);
+    if (rlCheck.locked) {
+      const res = NextResponse.json({ message: 'Too many reservation attempts. Please wait and try again.' }, { status: 429 });
+      if (rlCheck.retryAfterMs) res.headers.set('Retry-After', Math.ceil(rlCheck.retryAfterMs / 1000).toString());
+      return res;
+    }
     // 1. Parse and validate the request body
     const body = await req.json();
     const parsed = reservationSchema.safeParse(body);
@@ -196,6 +206,7 @@ export async function POST(req: NextRequest) {
       .single();
     if (insertError) {
       console.error('Supabase error (insert):', insertError);
+      await rateLimitFail(rlKey); // count as a fail (optional; comment out if you only want to penalize invalid input)
       return NextResponse.json({ message: 'Failed to save reservation' }, { status: 500 });
     }
 
@@ -216,15 +227,24 @@ export async function POST(req: NextRequest) {
       time: inserted.time,
       calendarStatus: inserted.calendar_status ?? undefined,
     } : null;
+    // Success: clear rate-limit fail counters for this IP
+    await rateLimitSuccess(rlKey);
     return NextResponse.json(
       {message: 'Reservation successful!', reservation: mapped},
       {status: 201}
     );
   } catch (error) {
     console.error('Reservation failed:', error);
+    // Count as fail to eventually lock abusive IPs
+    try {
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || (req as any).ip || 'unknown';
+      await rateLimitFail(`reservation:${ip}`);
+    } catch (_) { /* ignore rate-limit error */ }
     return NextResponse.json(
       {message: 'An unexpected error occurred.'},
       {status: 500}
     );
   }
 }
+
+export const runtime = 'nodejs';
