@@ -77,3 +77,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: 'Unexpected error' }, { status: 500 });
   }
 }
+
+export const runtime = 'nodejs';
