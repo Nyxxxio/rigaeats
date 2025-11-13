@@ -65,6 +65,12 @@ jobs:
           echo "Package contents:";
           ls -la out_azure | sed -n '1,200p'
 
+      - name: Zip deployment package
+        run: |
+          cd out_azure
+          zip -r ../out_azure.zip .
+          cd -
+
       - name: Archive production artifacts
         if: always()
         run: |
@@ -84,7 +90,7 @@ jobs:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           # Publish profile stored as a secret from Azure Portal
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: out_azure
+          package: out_azure.zip
 
       - name: Post-deploy health check
         run: |
