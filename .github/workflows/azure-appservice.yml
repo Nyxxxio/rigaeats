@@ -89,7 +89,7 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           # Publish profile stored as a secret from Azure Portal
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}
           package: out_azure.zip
 
       - name: Post-deploy health check

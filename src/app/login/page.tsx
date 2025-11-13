@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
-import LoginClient from './LoginClient';
+import LoginClient from 
+'./LoginClient';
 
 export const dynamic = 'force-dynamic';
 
