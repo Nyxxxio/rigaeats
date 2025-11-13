@@ -6,3 +6,5 @@ export async function GET(req: NextRequest) {
   res.cookies.set('admin_auth', '', { path: '/', maxAge: 0 });
   return res;
 }
+
+export const runtime = 'nodejs';
