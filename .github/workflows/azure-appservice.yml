@@ -33,8 +33,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck --if-present
 
-      - name: Lint
-        run: npm run lint --if-present
+      # Skip lint in CI to avoid interactive Next.js lint migration prompt
+      # - name: Lint
+      #   run: npm run lint --if-present
 
       - name: Build
         env:
@@ -45,6 +46,12 @@ jobs:
         run: |
           rm -rf out_azure
           mkdir -p out_azure/.next
+          # Guard: ensure standalone output exists
+          if [ ! -f .next/standalone/server.js ]; then
+            echo "Standalone output missing (.next/standalone/server.js). Check next.config.ts output: 'standalone' and build logs.";
+            ls -la .next || true;
+            exit 1;
+          fi
           cp -r .next/standalone/* out_azure/
           # Ensure server.js is present at the package root (required by Startup Command: node server.js)
           if [ -f .next/standalone/server.js ]; then cp .next/standalone/server.js out_azure/server.js; fi
@@ -61,7 +68,7 @@ jobs:
       - name: Archive production artifacts
         if: always()
         run: |
-          tar -czf build-artifacts.tar.gz .next/standalone .next/static public package.json next.config.ts
+          if [ -d out_azure ]; then tar -czf build-artifacts.tar.gz out_azure; else echo "out_azure missing; skipping tar"; fi
         # Upload artifact for debugging (optional retention)
       - name: Upload artifact (optional)
         uses: actions/upload-artifact@v4
