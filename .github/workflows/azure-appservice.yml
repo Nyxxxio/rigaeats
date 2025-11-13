@@ -46,10 +46,17 @@ jobs:
           rm -rf out_azure
           mkdir -p out_azure/.next
           cp -r .next/standalone/* out_azure/
+          # Ensure server.js is present at the package root (required by Startup Command: node server.js)
+          if [ -f .next/standalone/server.js ]; then cp .next/standalone/server.js out_azure/server.js; fi
           mkdir -p out_azure/.next
           cp -r .next/static out_azure/.next/static
           cp -r public out_azure/public || true
           cp package.json out_azure/package.json
+
+      - name: Inspect deployment package
+        run: |
+          echo "Package contents:";
+          ls -la out_azure | sed -n '1,200p'
 
       - name: Archive production artifacts
         if: always()
