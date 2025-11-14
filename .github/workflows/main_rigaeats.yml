@@ -47,7 +47,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Rigaeats'
-          slot-name: 'Production'
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}
