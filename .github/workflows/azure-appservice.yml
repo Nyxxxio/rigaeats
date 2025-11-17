@@ -106,8 +106,8 @@ jobs:
 
           echo "Writing publish profile to temporary file..."
           mkdir -p /tmp
-          # Use printf to avoid here-doc indentation issues inside YAML-run blocks
-          printf "%s" "${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}" > /tmp/publish-profile.xml
+          # Use printf with single quotes so any $ characters in the XML (e.g. $Rigaeats) are NOT expanded by the shell
+          printf '%s' '${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}' > /tmp/publish-profile.xml
 
           # Extract msdeploySite and destinationAppUrl from the first publishProfile entry
           msdeploySite=$(grep -oP 'msdeploySite="\\K[^"]+' /tmp/publish-profile.xml | head -n1 || true)
