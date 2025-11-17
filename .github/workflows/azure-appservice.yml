@@ -91,7 +91,9 @@ jobs:
       - name: Validate publish profile and target app
         shell: bash
         run: |
-          set -euo pipefail
+          # Use -e and -o pipefail; avoid -u (treat unset vars as error) because publish profile
+          # XML may contain $-prefixed tokens that can trigger unbound-variable failures.
+          set -eo pipefail
           echo "Checking publish profile presence..."
           if [ -z "${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}" ]; then
             echo "ERROR: Publish profile secret 'AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811' is missing or empty."
