@@ -99,17 +99,18 @@ jobs:
       - name: Post-deploy health check
         run: |
           echo "Checking health endpoint";
-          # Azure regional default domain differs from legacy <app>.azurewebsites.net
-          # Set a repo variable AZURE_WEBAPP_HOST to the full default domain shown in the portal
-          # (e.g. rigaeats-hteaf4ffdyaegdg9.swedencentral-01.azurewebsites.net) for a reliable health check.
+          # Prefer explicit host via repo variable AZURE_WEBAPP_HOST.
+          # If not set, skip health check (deployment already succeeded).
           HOST=${{ vars.AZURE_WEBAPP_HOST }}
-          FALLBACK=${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net
-          echo "Primary host: $HOST"
           if [ -z "$HOST" ]; then
-            echo "AZURE_WEBAPP_HOST not set; trying fallback $FALLBACK";
-            HOST=$FALLBACK
+            echo "AZURE_WEBAPP_HOST not set; skipping health check.";
+            exit 0
           fi
-          curl -v -fsS https://$HOST/api/health || {
-            echo "Primary health check failed, trying fallback host $FALLBACK";
-            curl -v -fsS https://$FALLBACK/api/health || exit 1;
-          }
+          echo "Health check host: $HOST"
+          # Try up to 6 times (up to ~60s) to allow warmup.
+          for i in 1 2 3 4 5 6; do
+            if curl -fsS --max-time 10 https://$HOST/api/health > /dev/null; then
+              echo "Health check OK"; exit 0; fi
+            echo "Attempt $i failed; waiting 10s..."; sleep 10
+          done
+          echo "Health check failed after retries"; exit 1
