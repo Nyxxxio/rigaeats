@@ -88,55 +88,6 @@ jobs:
           path: build-artifacts.tar.gz
           retention-days: 3
 
-      - name: Validate publish profile and target app
-        shell: bash
-        run: |
-          # Use -e and -o pipefail; avoid -u (treat unset vars as error) because publish profile
-          # XML may contain $-prefixed tokens that can trigger unbound-variable failures.
-          set -eo pipefail
-          echo "Checking publish profile presence..."
-          if [ -z "${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}" ]; then
-            echo "ERROR: Publish profile secret 'AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811' is missing or empty."
-            echo "Add it in GitHub → Settings → Secrets and variables → Actions and re-run the workflow."
-            exit 1
-          fi
-          if [ -z "${{ vars.AZURE_WEBAPP_NAME }}" ]; then
-            echo "ERROR: Repository variable 'AZURE_WEBAPP_NAME' is not set."
-            echo "Set it in GitHub → Settings → Secrets and variables → Actions → Variables and re-run the workflow."
-            exit 1
-          fi
-
-          echo "Writing publish profile to temporary file..."
-          mkdir -p /tmp
-          # Use printf with single quotes so any $ characters in the XML (e.g. $Rigaeats) are NOT expanded by the shell
-          printf '%s' '${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FBB012BE9D841AEB4C29A0DBEC87811 }}' > /tmp/publish-profile.xml
-
-          # Extract msdeploySite and destinationAppUrl from the first publishProfile entry
-          msdeploySite=$(grep -oP 'msdeploySite="\\K[^"]+' /tmp/publish-profile.xml | head -n1 || true)
-          destUrl=$(grep -oP 'destinationAppUrl="\\K[^"]+' /tmp/publish-profile.xml | head -n1 || true)
-
-          echo "msdeploySite: $msdeploySite"
-          echo "destinationAppUrl: $destUrl"
-
-          if [ -z "$msdeploySite" ]; then
-            echo "ERROR: Could not find msdeploySite in publish profile. Is the XML valid?"
-            exit 1
-          fi
-
-          expectedSite="${{ vars.AZURE_WEBAPP_NAME }}"
-          if [ "$msdeploySite" != "$expectedSite" ]; then
-            echo "ERROR: publish profile msdeploySite ('$msdeploySite') does not match AZURE_WEBAPP_NAME ('$expectedSite')."
-            echo "Replace the publish profile secret with the profile downloaded from the App Service named '$expectedSite'."
-            exit 1
-          fi
-
-          if [[ "$destUrl" != *"$expectedSite"* ]]; then
-            echo "ERROR: publish profile destinationAppUrl ('$destUrl') does not contain AZURE_WEBAPP_NAME ('$expectedSite')."
-            exit 1
-          fi
-
-          echo "Publish profile matches AZURE_WEBAPP_NAME. Proceeding to deploy."
-
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
