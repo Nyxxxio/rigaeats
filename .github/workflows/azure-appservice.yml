@@ -57,9 +57,10 @@ jobs:
           if [ -f .next/standalone/server.js ]; then cp .next/standalone/server.js out_azure/server.js; fi
           mkdir -p out_azure/.next
           cp -r .next/static out_azure/.next/static
-          # Ensure Next's BUILD_ID and server files are present so server.js can find the production build
-          if [ -f .next/BUILD_ID ]; then cp .next/BUILD_ID out_azure/.next/BUILD_ID; fi
-          if [ -d .next/server ]; then cp -r .next/server out_azure/.next/server; fi
+          # Ensure Next's production build files are present so server.js can find the build.
+          # Copy the whole .next folder contents (BUILD_ID, server, static, etc.) into the package.
+          mkdir -p out_azure/.next
+          cp -r .next/* out_azure/.next/ || true
           cp -r public out_azure/public || true
           cp package.json out_azure/package.json
 
