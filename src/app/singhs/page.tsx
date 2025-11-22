@@ -560,24 +560,43 @@ const Page = () => {
                   <Label htmlFor="time" className="text-gray-400">
                     Time
                   </Label>
-                  <Select name="time" value={time} onValueChange={setTime}>
-                    <SelectTrigger className="w-full bg-[#2a2a2a] border-gray-600">
-                      <SelectValue placeholder="Select a time" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#181818] text-white border-gray-600">
+                  {typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) ? (
+                    <select
+                      name="time"
+                      value={time}
+                      onChange={e => setTime(e.target.value)}
+                      className="w-full bg-[#2a2a2a] border-gray-600 text-white rounded-md h-10 px-3 py-2"
+                      required
+                    >
+                      <option value="" disabled>Select a time</option>
                       {availableTimes.length > 0 ? (
-                        availableTimes.map((hour) => (
-                            <SelectItem key={hour} value={hour}>
-                                {hour}
-                            </SelectItem>
+                        availableTimes.map(hour => (
+                          <option key={hour} value={hour}>{hour}</option>
                         ))
                       ) : (
-                        <SelectItem value="no-slots" disabled>
-                          No available slots for this day
-                        </SelectItem>
+                        <option value="no-slots" disabled>No available slots for this day</option>
                       )}
-                    </SelectContent>
-                  </Select>
+                    </select>
+                  ) : (
+                    <Select name="time" value={time} onValueChange={setTime}>
+                      <SelectTrigger className="w-full bg-[#2a2a2a] border-gray-600">
+                        <SelectValue placeholder="Select a time" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#181818] text-white border-gray-600">
+                        {availableTimes.length > 0 ? (
+                          availableTimes.map((hour) => (
+                              <SelectItem key={hour} value={hour}>
+                                  {hour}
+                              </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-slots" disabled>
+                            No available slots for this day
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
                 <DialogFooter>
                   <Button
