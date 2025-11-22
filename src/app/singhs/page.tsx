@@ -517,11 +517,11 @@ const Page = () => {
                       </SelectTrigger>
                       <SelectContent className="bg-[#181818] text-white border-gray-600">
                         <SelectItem value="1">1 person</SelectItem>
-                        <SelectItem value="2">2 people</SelectItem>
-                        <SelectItem value="3">3 people</SelectItem>
-                        <SelectItem value="4">4 people</SelectItem>
-                        <SelectItem value="5">5 people</SelectItem>
-                        <SelectItem value="6">6 people</SelectItem>
+                        {Array.from({ length: 19 }, (_, i) => i + 2).map((n) => (
+                          <SelectItem key={n} value={String(n)}>
+                            {n} {n === 1 ? 'person' : 'people'}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

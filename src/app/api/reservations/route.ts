@@ -29,7 +29,10 @@ const reservationSchema = z.object({
     .min(7, 'Phone is required.')
     .max(20, 'Phone number is too long.')
     .regex(/^[+\d().\-\s]{7,20}$/, 'Invalid phone number.'),
-  guests: z.number().min(1, 'At least one guest is required.'),
+  guests: z
+    .number()
+    .min(2, 'Minimum 2 guests.')
+    .max(20, 'Maximum 20 guests.'),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format.'),
   time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format.'),
 });
