@@ -532,6 +532,7 @@ const Page = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
+                          type="button"
                           variant={'outline'}
                           className={cn(
                             'w-full justify-start text-left font-normal bg-[#2a2a2a] border-gray-600 hover:bg-[#3a3a3a] hover:text-white',
