@@ -529,31 +529,44 @@ const Page = () => {
                     <Label htmlFor="date" className="text-gray-400">
                       Date
                     </Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant={'outline'}
-                          className={cn(
-                            'w-full justify-start text-left font-normal bg-[#2a2a2a] border-gray-600 hover:bg-[#3a3a3a] hover:text-white',
-                            !date && 'text-muted-foreground'
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {date ? format(date, 'PPP') : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-[#181818] border-gray-700">
-                        <Calendar
-                          mode="single"
-                          selected={date}
-                          onSelect={setDate}
-                          initialFocus
-                          className="text-white"
-                          disabled={{ before: new Date() }}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    {typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) ? (
+                      <input
+                        type="date"
+                        name="date"
+                        id="date"
+                        className="w-full bg-[#2a2a2a] border-gray-600 text-white rounded-md h-10 px-3 py-2"
+                        value={date ? format(date, 'yyyy-MM-dd') : ''}
+                        min={format(new Date(), 'yyyy-MM-dd')}
+                        onChange={e => setDate(e.target.value ? new Date(e.target.value) : undefined)}
+                        required
+                      />
+                    ) : (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant={'outline'}
+                            className={cn(
+                              'w-full justify-start text-left font-normal bg-[#2a2a2a] border-gray-600 hover:bg-[#3a3a3a] hover:text-white',
+                              !date && 'text-muted-foreground'
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-[#181818] border-gray-700">
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            initialFocus
+                            className="text-white"
+                            disabled={{ before: new Date() }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
