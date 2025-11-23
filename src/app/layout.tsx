@@ -42,15 +42,22 @@ export default function RootLayout({
       <body className="font-body antialiased">
         {children}
         <Toaster />
-        <Script src="https://cdn.simpleanalytics.io/hello.js" async defer />
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://api.simpleanalyticscdn.com/noscript.gif"
-            alt=""
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </noscript>
+        {(process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true') && (
+          <>
+            <Script
+              src="https://scripts.simpleanalyticscdn.com/latest.js"
+              strategy="afterInteractive"
+            />
+            <noscript>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://api.simpleanalyticscdn.com/noscript.gif"
+                alt=""
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </noscript>
+          </>
+        )}
       </body>
     </html>
   );
