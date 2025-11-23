@@ -135,7 +135,7 @@ const Page = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 1000); // Change slide every 1 second
+    }, 500); // Change slide every 0.5 seconds
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
@@ -318,7 +318,7 @@ const Page = () => {
                 src={img.imageUrl}
                 alt={img.description}
                 fill
-                className={`object-cover grayscale transition-opacity duration-1000 ease-in-out ${
+                className={`object-cover grayscale ${
                   index === currentSlide ? 'opacity-100' : 'opacity-0'
                 }`}
                 priority={index === 0}
