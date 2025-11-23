@@ -79,8 +79,22 @@ const Page = () => {
   const [time, setTime] = useState('19:00');
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [fullyBookedSlots, setFullyBookedSlots] = useState<string[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   const { toast } = useToast();
+
+  // Helper to get image by id
+  const getImage = (id: string) => {
+    return placeholderData.placeholderImages.find(img => img.id === id);
+  };
+
+  // Hero images for background slideshow
+  const heroImages = [
+    getImage('hero'),
+    getImage('hero-2'),
+    getImage('hero-3'),
+    getImage('hero-4'),
+  ].filter(Boolean);
   
   useEffect(() => {
     const selectedDate = date || new Date();
@@ -117,12 +131,14 @@ const Page = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, fullyBookedSlots.length]);
 
+  // Auto-advance hero slideshow
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000); // Change slide every 5 seconds
 
-  const getImage = (id: string) => {
-    return placeholderData.placeholderImages.find(img => img.id === id);
-  }
-
-  const heroImage = getImage('hero');
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   const openModal = () => {
     setIsSubmitted(false);
@@ -295,16 +311,21 @@ const Page = () => {
         </main>
         
         <div className="absolute inset-0 z-0">
-          {heroImage && (
-            <Image
-              src={heroImage.imageUrl}
-              alt={heroImage.description}
-              fill
-              className="object-cover grayscale"
-              priority
-              data-ai-hint={heroImage.imageHint}
-            />
-          )}
+          {heroImages.map((img, index) => (
+            img && (
+              <Image
+                key={img.id}
+                src={img.imageUrl}
+                alt={img.description}
+                fill
+                className={`object-cover grayscale transition-opacity duration-1000 ease-in-out ${
+                  index === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
+                priority={index === 0}
+                data-ai-hint={img.imageHint}
+              />
+            )
+          ))}
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
       </div>

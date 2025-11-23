@@ -2,9 +2,27 @@
   "placeholderImages": [
     {
       "id": "hero",
-      "description": "A close-up of a tandoor oven, glowing with hot coals, used for making traditional Indian bread and dishes.",
-      "imageUrl": "https://images.unsplash.com/photo-1671507136750-05ebd0f97843?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0YW5kb29yfGVufDB8fHx8MTc1OTY2MDYxMHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "tandoor oven"
+      "description": "Restaurant hero image 1",
+      "imageUrl": "/images/hero-1.jpg",
+      "imageHint": "restaurant interior"
+    },
+    {
+      "id": "hero-2",
+      "description": "Restaurant hero image 2",
+      "imageUrl": "/images/hero-2.jpg",
+      "imageHint": "food presentation"
+    },
+    {
+      "id": "hero-3",
+      "description": "Restaurant hero image 3",
+      "imageUrl": "/images/hero-3.jpg",
+      "imageHint": "dining experience"
+    },
+    {
+      "id": "hero-4",
+      "description": "Restaurant hero image 4",
+      "imageUrl": "/images/hero-4.jpg",
+      "imageHint": "ambiance"
     },
     {
       "id": "menu-samosa",
