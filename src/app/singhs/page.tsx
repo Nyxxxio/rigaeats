@@ -135,7 +135,7 @@ const Page = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000); // Change slide every 5 seconds
+    }, 1000); // Change slide every 1 second
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
