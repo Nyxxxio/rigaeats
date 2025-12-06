@@ -80,6 +80,7 @@ const Page = () => {
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [fullyBookedSlots, setFullyBookedSlots] = useState<string[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   
   const { toast } = useToast();
 
@@ -94,6 +95,10 @@ const Page = () => {
     getImage('hero-2'),
     getImage('hero-3'),
     getImage('hero-4'),
+    getImage('hero-5'),
+    getImage('hero-6'),
+    getImage('hero-7'),
+    getImage('hero-8'),
   ].filter(Boolean);
   
   useEffect(() => {
@@ -135,7 +140,7 @@ const Page = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 4000); // Change slide every 4 seconds
+    }, 900); // Change slide every 900ms
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
@@ -294,17 +299,21 @@ const Page = () => {
 
         {/* Hero Section */}
         <main className="relative z-10 pattern-bg">
-           <section className="min-h-screen container mx-auto flex flex-col justify-center items-center px-6">
+           <section className="min-h-screen container mx-auto flex flex-col justify-center items-center px-6 pt-12 md:pt-24 lg:pt-32">
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-extrabold text-white leading-tight mb-8">
-                The Best Indian Restaurant in Riga
+              <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-body font-semibold text-white leading-none md:leading-tight mb-2 tracking-tight">
+                Crafted. Seasoned. Indian.
               </h1>
+              <p className="text-sm md:text-base text-gray-300 font-body max-w-2xl mx-auto mt-3">
+                Refined taste of India in the heart of Riga.
+              </p>
               <Button
-                  onClick={openModal}
-                  size="lg"
-                  className="rounded-full bg-white text-black hover:bg-gray-200 transform hover:scale-105 mt-16"
+                onClick={openModal}
+                variant="outline"
+                size="lg"
+                className="rounded-full text-white border-white hover:bg-white hover:text-black mt-32 px-10 py-4 text-base md:text-lg"
               >
-                  Book Your Experience
+                Book Your Experience
               </Button>
             </div>
           </section>
@@ -327,6 +336,9 @@ const Page = () => {
             )
           ))}
           <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'linear-gradient(to bottom, transparent 60%, black 100%)'
+          }}></div>
         </div>
       </div>
 
@@ -562,7 +574,7 @@ const Page = () => {
                         required
                       />
                     ) : (
-                      <Popover>
+                      <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             type="button"
@@ -580,7 +592,10 @@ const Page = () => {
                           <Calendar
                             mode="single"
                             selected={date}
-                            onSelect={setDate}
+                            onSelect={(selected) => {
+                              setDate(selected || undefined);
+                              setIsDatePickerOpen(false);
+                            }}
                             initialFocus
                             className="text-white"
                             disabled={{ before: new Date() }}

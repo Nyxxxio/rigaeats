@@ -42,5 +42,30 @@
       "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f39791e8?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "imageHint": "vegetable biryani"
     }
+    ,
+    {
+      "id": "hero-5",
+      "description": "Restaurant hero image 5",
+      "imageUrl": "/images/hero-5.jpg",
+      "imageHint": "dining detail"
+    },
+    {
+      "id": "hero-6",
+      "description": "Restaurant hero image 6",
+      "imageUrl": "/images/hero-6.jpg",
+      "imageHint": "chef plating"
+    },
+    {
+      "id": "hero-7",
+      "description": "Restaurant hero image 7",
+      "imageUrl": "/images/hero-7.jpg",
+      "imageHint": "table setting"
+    },
+    {
+      "id": "hero-8",
+      "description": "Restaurant hero image 8",
+      "imageUrl": "/images/hero-8.jpg",
+      "imageHint": "candlelit ambiance"
+    }
   ]
 }
