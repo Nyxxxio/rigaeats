@@ -3,25 +3,25 @@
     {
       "id": "hero",
       "description": "Restaurant hero image 1",
-      "imageUrl": "/images/hero-1.jpg",
+      "imageUrl": "/images/Hero-1.jpg",
       "imageHint": "restaurant interior"
     },
     {
       "id": "hero-2",
       "description": "Restaurant hero image 2",
-      "imageUrl": "/images/hero-2.jpg",
+      "imageUrl": "/images/Hero-2.jpg",
       "imageHint": "food presentation"
     },
     {
       "id": "hero-3",
       "description": "Restaurant hero image 3",
-      "imageUrl": "/images/hero-3.jpg",
+      "imageUrl": "/images/Hero-3.jpg",
       "imageHint": "dining experience"
     },
     {
       "id": "hero-4",
       "description": "Restaurant hero image 4",
-      "imageUrl": "/images/hero-4.jpg",
+      "imageUrl": "/images/Hero-4.jpg",
       "imageHint": "ambiance"
     },
     {
@@ -46,25 +46,25 @@
     {
       "id": "hero-5",
       "description": "Restaurant hero image 5",
-      "imageUrl": "/images/hero-5.jpg",
+      "imageUrl": "/images/Hero-5.jpg",
       "imageHint": "dining detail"
     },
     {
       "id": "hero-6",
       "description": "Restaurant hero image 6",
-      "imageUrl": "/images/hero-6.jpg",
+      "imageUrl": "/images/Hero-6.jpg",
       "imageHint": "chef plating"
     },
     {
       "id": "hero-7",
       "description": "Restaurant hero image 7",
-      "imageUrl": "/images/hero-7.jpg",
+      "imageUrl": "/images/Hero-7.jpg",
       "imageHint": "table setting"
     },
     {
       "id": "hero-8",
       "description": "Restaurant hero image 8",
-      "imageUrl": "/images/hero-8.jpg",
+      "imageUrl": "/images/Hero-8.jpg",
       "imageHint": "candlelit ambiance"
     }
   ]
