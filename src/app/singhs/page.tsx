@@ -313,17 +313,24 @@ const Page = () => {
         <main className="relative z-10 pattern-bg">
            <section className="min-h-screen container mx-auto flex flex-col justify-center items-center px-6 pt-12 md:pt-24 lg:pt-32">
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-body font-semibold text-white leading-none md:leading-tight mb-2 tracking-tight">
+              <h1
+                className="text-5xl md:text-7xl lg:text-[5.5rem] font-body font-semibold text-white leading-none md:leading-tight mb-2 tracking-tight animate-fade-slide"
+                style={{ animationDelay: '0s' }}
+              >
                 Crafted. Seasoned. Indian.
               </h1>
-              <p className="text-sm md:text-base text-gray-300 font-body max-w-2xl mx-auto mt-3">
+              <p
+                className="text-sm md:text-base text-gray-300 font-body max-w-2xl mx-auto mt-3 animate-fade-slide"
+                style={{ animationDelay: '0.12s' }}
+              >
                 Refined taste of India in the heart of Riga.
               </p>
               <Button
                 onClick={openModal}
                 variant="outline"
                 size="lg"
-                className="rounded-full text-white border-white hover:bg-white hover:text-black mt-32 px-10 py-4 text-base md:text-lg"
+                className="rounded-full text-white border-white hover:bg-white hover:text-black mt-32 px-10 py-4 text-base md:text-lg animate-fade-slide"
+                style={{ animationDelay: '0.24s' }}
               >
                 Book Your Experience
               </Button>
