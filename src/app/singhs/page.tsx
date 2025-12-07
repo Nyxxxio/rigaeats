@@ -100,6 +100,18 @@ const Page = () => {
     getImage('hero-7'),
     getImage('hero-8'),
   ].filter(Boolean);
+
+  // Preload hero images (improves perceived load, especially on mobile)
+  useEffect(() => {
+    // preload first few images to avoid stalls during slideshow
+    (heroImages || []).slice(0, 4).forEach((img) => {
+      if (!img) return;
+      if (typeof window !== 'undefined') {
+        const preloadImg = new window.Image();
+        preloadImg.src = img.imageUrl;
+      }
+    });
+  }, [heroImages]);
   
   useEffect(() => {
     const selectedDate = date || new Date();
@@ -327,7 +339,7 @@ const Page = () => {
                 src={img.imageUrl}
                 alt={img.description}
                 fill
-                className={`object-cover grayscale ${
+                className={`object-cover grayscale transition-opacity duration-300 ease-in-out ${
                   index === currentSlide ? 'opacity-100' : 'opacity-0'
                 }`}
                 priority={index === 0}

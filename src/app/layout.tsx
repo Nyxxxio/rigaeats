@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import { Inter, Playfair_Display, Hind_Siliguri } from 'next/font/google';
 import Script from 'next/script';
+import Head from 'next/head';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -40,6 +41,11 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfairDisplay.variable} ${hindSiliguri.variable} !scroll-smooth`}
     >
+      <Head>
+        {/* Preload the primary hero images to improve perceived load time */}
+        <link rel="preload" as="image" href="/images/hero-1.jpg" />
+        <link rel="preload" as="image" href="/images/hero-2.jpg" />
+      </Head>
       <body className="font-body antialiased">
         {children}
         <Toaster />
