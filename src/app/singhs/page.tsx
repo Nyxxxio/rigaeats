@@ -101,6 +101,29 @@ const Page = () => {
     getImage('hero-8'),
   ].filter(Boolean);
 
+  const galleryImages = [
+    {
+      src: '/gallery/gallery-1.jpg',
+      description: 'Crispy pastry filled with spiced potatoes and peas.',
+    },
+    {
+      src: '/gallery/gallery-2.jpg',
+      description: 'Tender chicken in a creamy, spiced tomato sauce.',
+    },
+    {
+      src: '/gallery/gallery-3.jpg',
+      description: 'Aromatic basmati rice cooked with mixed vegetables and fragrant spices.',
+    },
+    {
+      src: '/gallery/gallery-4.jpg',
+      description: "Guests enjoying an evening at Singh's.",
+    },
+    {
+      src: '/gallery/gallery-5.jpg',
+      description: 'Skewers roasting over glowing coals in the tandoor.',
+    },
+  ];
+
   // Preload hero images (improves perceived load, especially on mobile)
   useEffect(() => {
     // preload first few images to avoid stalls during slideshow
@@ -299,7 +322,7 @@ const Page = () => {
                 </Sheet>
               </div>
               <a
-                href="https://rigaeats.com"
+                href="https://rigaeats.app"
                 target="_blank"
                 className="text-xs text-gray-400 hover:text-white hidden lg:block border-l border-gray-700 pl-8"
               >
@@ -440,6 +463,39 @@ const Page = () => {
           </div>
         </section>
 
+        {/* Gallery Section */}
+        <section id="gallery" className="w-full py-12 md:py-20 bg-[#181818] border-t border-gray-800">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center mb-10 md:mb-14">
+              <h2 className="text-4xl md:text-5xl font-display text-white mb-3">
+                Gallery
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+                A glimpse into the plates, people, and moments that define Singh&apos;s.
+              </p>
+            </div>
+
+            <div className="pb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 px-2 md:px-4">
+                {galleryImages.map((img) => (
+                  <div
+                    key={img.src}
+                    className="group relative w-40 h-56 md:w-56 md:h-72 rounded-2xl overflow-hidden bg-black/40 border border-white/10 shadow-lg shadow-black/40 transition-transform duration-300 ease-out hover:scale-110 hover:z-20 hover:border-white/40"
+                  >
+                    <Image
+                      src={img.src}
+                      alt={img.description}
+                      fill
+                      className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                      sizes="(min-width: 1024px) 220px, 45vw"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Booking Section */}
         <section id="booking" className="py-10 md:py-16 bg-[#181818]">
           <div className="container mx-auto px-6 text-center">
@@ -465,7 +521,24 @@ const Page = () => {
       <footer id="contact" className="bg-black py-12">
         <div className="container mx-auto px-6 text-center text-gray-500">
           <p className="text-lg font-display text-gray-300 mb-2">SINGH'S</p>
-          <p>Pulkveža Brieža iela 2, Centra rajons, Rīga, LV-1010</p>
+          <p>
+            <a
+              href="https://maps.app.goo.gl/U1Zc416sk3wxukXh6"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
+              Pulkveža Brieža iela 2, Centra rajons, Rīga, LV-1010
+            </a>
+          </p>
+          <p>
+            <a
+              href="https://maps.app.goo.gl/g1GceX7YZhineSAx6"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
+              Ģertrūdes iela 32, Centra rajons, Rīga, LV-1011
+            </a>
+          </p>
           <p>(371) 6331-1909</p>
           <div className="flex justify-center space-x-6 mt-6">
             <a href="https://www.instagram.com/singhs_restaurant?utm_source=our_website&igsh=ZDNlZDc0MzIxNw==" className="hover:text-white transition-colors">
@@ -474,14 +547,18 @@ const Page = () => {
             <a href="https://www.facebook.com/Singhsrestaurantandbar?utm_source=our_website" className="hover:text-white transition-colors">
               Facebook
             </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Yelp
+            <a
+              href="https://www.tripadvisor.com/Restaurant_Review-g274967-d8426585-Reviews-Singh_s-Riga_Riga_Region.html"
+              target="_blank"
+              className="hover:text-white transition-colors"
+            >
+              Tripadvisor
             </a>
           </div>
           <p className="mt-8 text-sm">
             Proudly featured on{' '}
             <a
-              href="https://rigaeats.com"
+              href="https://rigaeats.app"
               target="_blank"
               className="font-semibold text-gray-400 hover:text-white"
             >
