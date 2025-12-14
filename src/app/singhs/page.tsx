@@ -476,7 +476,34 @@ const Page = () => {
             </div>
 
             <div className="pb-4">
-              <div className="flex flex-col items-center md:flex-row md:justify-center md:items-end px-2 md:px-4">
+              <Carousel
+                opts={{
+                  align: 'center',
+                  loop: true,
+                }}
+                className="w-full max-w-6xl mx-auto md:hidden"
+              >
+                <CarouselContent>
+                  {galleryImages.map((img, index) => (
+                    <CarouselItem key={img.src} className="basis-4/5">
+                      <div className="p-2">
+                        <div className="group relative w-full h-72 rounded-3xl overflow-hidden bg-black/50 border border-white/10 shadow-xl shadow-black/40 transition-all duration-500 ease-out hover:scale-105 hover:border-white/50">
+                          <Image
+                            src={img.src}
+                            alt={img.description}
+                            fill
+                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                            sizes="80vw"
+                          />
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="text-white bg-black/50 border-gray-600 hover:bg-white/10" />
+                <CarouselNext className="text-white bg-black/50 border-gray-600 hover:bg-white/10" />
+              </Carousel>
+              <div className="hidden md:flex md:flex-row md:justify-center md:items-end px-2 md:px-4">
                 {galleryImages.map((img, index) => {
                   const position = index - (galleryImages.length - 1) / 2;
                   const offset = position * 14; // spread cards horizontally
