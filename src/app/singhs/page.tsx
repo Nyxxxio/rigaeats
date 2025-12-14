@@ -476,21 +476,31 @@ const Page = () => {
             </div>
 
             <div className="pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 px-2 md:px-4">
-                {galleryImages.map((img) => (
-                  <div
-                    key={img.src}
-                    className="group relative w-40 h-56 md:w-56 md:h-72 rounded-2xl overflow-hidden bg-black/40 border border-white/10 shadow-lg shadow-black/40 transition-transform duration-300 ease-out hover:scale-110 hover:z-20 hover:border-white/40"
-                  >
-                    <Image
-                      src={img.src}
-                      alt={img.description}
-                      fill
-                      className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-                      sizes="(min-width: 1024px) 220px, 45vw"
-                    />
-                  </div>
-                ))}
+              <div className="flex flex-col items-center md:flex-row md:justify-center md:items-end px-2 md:px-4">
+                {galleryImages.map((img, index) => {
+                  const position = index - (galleryImages.length - 1) / 2;
+                  const offset = position * 14; // spread cards horizontally
+                  const rotation = position * 7; // fan angles
+
+                  return (
+                    <div
+                      key={img.src}
+                      style={{
+                        '--offset': `${offset}%`,
+                        '--rotation': `${rotation}deg`,
+                      } as React.CSSProperties}
+                      className="group relative w-48 h-64 sm:w-56 sm:h-72 md:w-60 md:h-80 rounded-3xl overflow-hidden bg-black/50 border border-white/10 shadow-xl shadow-black/40 transition-transform duration-500 ease-out md:-mx-10 md:origin-center md:[transform:translateX(var(--offset))_rotate(var(--rotation))] md:hover:[transform:translateX(0)_translateY(-10px)_rotate(0deg)_scale(1.25)] hover:scale-125 hover:z-30 hover:border-white/50"
+                    >
+                      <Image
+                        src={img.src}
+                        alt={img.description}
+                        fill
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                        sizes="(min-width: 1024px) 240px, 55vw"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
