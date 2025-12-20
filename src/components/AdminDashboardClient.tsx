@@ -17,6 +17,9 @@ interface Booking {
     time: string;
     status?: string;
     calendarStatus?: 'Synced' | 'Error' | 'Pending';
+    reservationCode?: string;
+    restaurantSlug?: string;
+    locationLabel?: string;
 }
 
 interface AdminDashboardProps {
@@ -50,6 +53,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ restaurant }) => {
         }
     };
 
+    const getLocationLabel = (slug?: string) => {
+        if (!slug) return '—';
+        switch (slug) {
+            case 'singhs_pulkveza':
+                return 'Pulkveža Brieža iela 2';
+            case 'singhs_gertrudes':
+                return 'Ģertrūdes iela 32';
+            default:
+                return slug;
+        }
+    };
+
     useEffect(() => {
         const fetchBookings = async () => {
             try {
@@ -63,7 +78,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ restaurant }) => {
                 // Assign a simple status for display
                 const bookingsWithStatus = data.reservations.map((b: Booking) => ({
                     ...b,
-                    status: new Date(b.date) > new Date() ? 'Confirmed' : 'Completed'
+                    status: new Date(b.date) > new Date() ? 'Confirmed' : 'Completed',
+                    locationLabel: getLocationLabel(b.restaurantSlug),
                 }));
                 setBookings(bookingsWithStatus);
             } catch (err: any) {
@@ -202,6 +218,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ restaurant }) => {
                                         <TableHeader>
                                             <TableRow className="border-gray-700 hover:bg-gray-800">
                                                 <TableHead className="text-white">Name</TableHead>
+                                                <TableHead className="text-white">Res. ID</TableHead>
+                                                <TableHead className="text-white">Location</TableHead>
                                                 <TableHead className="text-white">Email</TableHead>
                                                 <TableHead className="text-white">Phone</TableHead>
                                                 <TableHead className="text-white">Guests</TableHead>
@@ -214,6 +232,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ restaurant }) => {
                                             {bookings.map((booking) => (
                                                 <TableRow key={booking.id} className="border-gray-800 hover:bg-gray-800/50">
                                                     <TableCell className="font-medium">{booking.name}</TableCell>
+                                                    <TableCell>
+                                                        {booking.reservationCode ? (
+                                                            <span className="font-mono text-xs tracking-widest bg-gray-800/80 px-2 py-1 rounded-md">
+                                                                {booking.reservationCode}
+                                                            </span>
+                                                        ) : (
+                                                            '—'
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell>{booking.locationLabel || getLocationLabel(booking.restaurantSlug)}</TableCell>
                                                     <TableCell>{booking.email}</TableCell>
                                                     <TableCell>
                                                         {booking.phone ? (

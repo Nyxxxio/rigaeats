@@ -35,7 +35,20 @@ const reservationSchema = z.object({
     .max(20, 'Maximum 20 guests.'),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format.'),
   time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format.'),
+  restaurantSlug: z.string().min(1).optional(),
 });
+
+// Simple 6-character alphanumeric reservation code
+const RESERVATION_CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+function generateReservationCode(length: number = 6): string {
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    const idx = Math.floor(Math.random() * RESERVATION_CODE_CHARS.length);
+    code += RESERVATION_CODE_CHARS[idx];
+  }
+  return code;
+}
 
 /**
  * GET handler to retrieve reservations.
@@ -90,6 +103,8 @@ export async function GET(req: NextRequest) {
         date: typeof r.date === 'string' ? r.date : new Date(r.date).toISOString().split('T')[0],
         time: r.time,
         calendarStatus: r.calendar_status ?? undefined,
+        reservationCode: (r as any).reservation_code ?? undefined,
+        restaurantSlug: (r as any).restaurant ?? undefined,
       }));
       return NextResponse.json({ reservations: mapped });
     }
@@ -127,7 +142,7 @@ export async function POST(req: NextRequest) {
         {status: 400}
       );
     }
-  const {name, email, phone, date, time, guests} = parsed.data as any;
+  const {name, email, phone, date, time, guests, restaurantSlug: requestedRestaurantSlug} = parsed.data as any;
     const reservationDateTime = new Date(`${date}T${time}:00`);
     const dayOfWeek = reservationDateTime.getUTCDay();
     const hour = reservationDateTime.getUTCHours();
@@ -146,12 +161,45 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerSupabase();
 
-    // 3. Check for booking capacity in DB
+    // 3. Determine restaurant/location slug
+    // Prefer authenticated admin's restaurant (from cookie JWT), otherwise
+    // use the location sent by the client (validated against Supabase),
+    // falling back to a default.
+    let restaurantSlug: string | undefined = undefined;
+    try {
+      const adminCookie = (req as any).cookies?.get?.('admin_auth')?.value || req.cookies.get('admin_auth')?.value;
+      const payload = adminCookie ? await verifyToken(adminCookie) : null;
+      restaurantSlug = payload?.restaurant as string | undefined;
+    } catch (e) {
+      // ignore verification errors and fall back
+    }
+
+    if (!restaurantSlug) {
+      restaurantSlug = requestedRestaurantSlug || process.env.DEFAULT_RESTAURANT_SLUG || 'singhs';
+    }
+
+    // 4. Validate restaurant exists and apply capacity per location
+    const { data: restaurantRow, error: restaurantError } = await supabase
+      .from('restaurants')
+      .select('slug')
+      .eq('slug', restaurantSlug)
+      .maybeSingle();
+
+    if (restaurantError) {
+      console.error('Supabase error (restaurant lookup):', restaurantError);
+      return NextResponse.json({ message: 'Failed to verify restaurant.' }, { status: 500 });
+    }
+
+    if (!restaurantRow) {
+      return NextResponse.json({ message: 'Invalid restaurant selected.' }, { status: 400 });
+    }
+
     const { data: existing, error: countError } = await supabase
       .from('reservations')
       .select('id', { count: 'exact' })
       .eq('date', date)
-      .eq('time', time);
+      .eq('time', time)
+      .eq('restaurant', restaurantSlug);
     if (countError) {
       console.error('Supabase error (capacity):', countError);
       return NextResponse.json({ message: 'Failed to check capacity' }, { status: 500 });
@@ -166,17 +214,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Create the base reservation object
-  // Determine restaurant: prefer authenticated admin's restaurant (from cookie JWT),
-  // otherwise use default. Do NOT accept restaurant from client body to prevent spoofing.
-    let restaurantSlug: string | undefined = undefined;
-    try {
-      const adminCookie = (req as any).cookies?.get?.('admin_auth')?.value || req.cookies.get('admin_auth')?.value;
-      const payload = adminCookie ? await verifyToken(adminCookie) : null;
-      restaurantSlug = payload?.restaurant as string | undefined;
-    } catch (e) {
-      // ignore verification errors and fall back
-    }
+    const reservationCode = generateReservationCode();
 
     const newReservationDB: any = {
       name,
@@ -185,13 +223,14 @@ export async function POST(req: NextRequest) {
       guests,
       date,
       time,
-      restaurant: restaurantSlug ?? process.env.DEFAULT_RESTAURANT_SLUG ?? 'singhs',
+      reservation_code: reservationCode,
+      restaurant: restaurantSlug,
       calendar_status: 'Pending',
     };
     
     // 5. Add to Google Calendar
     try {
-      await createCalendarEvent({ name, email, phone, guests, date, time });
+      await createCalendarEvent({ name, email, phone, guests, date, time, reservationCode });
       newReservationDB.calendar_status = 'Synced';
       console.log("Successfully added event to Google Calendar.");
     } catch (calendarError) {
@@ -213,12 +252,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Failed to save reservation' }, { status: 500 });
     }
 
+    // 7. Send a confirmation email (currently logs to server console).
+    try {
+      const emailDate = typeof inserted.date === 'string'
+        ? inserted.date
+        : new Date(inserted.date).toISOString().split('T')[0];
 
-    // 7. Send a confirmation email (placeholder)
-    // await sendConfirmationEmail({
-    //   to: email,
-    //   reservationDetails: newReservation,
-    // });
+      await sendConfirmationEmail({
+        to: email,
+        reservationDetails: {
+          id: inserted.id,
+          guests: inserted.guests,
+          date: emailDate,
+          time: inserted.time,
+          reservationCode: inserted.reservation_code ?? reservationCode,
+          guestName: inserted.name,
+          restaurantSlug: inserted.restaurant,
+        },
+      });
+    } catch (emailError) {
+      // Don't fail the reservation if email sending has an issue
+      console.error('Failed to send confirmation email:', emailError);
+    }
 
     const mapped = inserted ? {
       id: inserted.id,
@@ -229,6 +284,7 @@ export async function POST(req: NextRequest) {
       date: typeof inserted.date === 'string' ? inserted.date : new Date(inserted.date).toISOString().split('T')[0],
       time: inserted.time,
       calendarStatus: inserted.calendar_status ?? undefined,
+      reservationCode: inserted.reservation_code ?? undefined,
     } : null;
     // Success: clear rate-limit fail counters for this IP
     await rateLimitSuccess(rlKey);

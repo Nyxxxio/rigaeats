@@ -81,6 +81,8 @@ const Page = () => {
   const [fullyBookedSlots, setFullyBookedSlots] = useState<string[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [reservationCode, setReservationCode] = useState<string | null>(null);
+  const [location, setLocation] = useState('singhs_pulkveza');
   
   const { toast } = useToast();
 
@@ -121,6 +123,19 @@ const Page = () => {
     {
       src: '/gallery/gallery-5.jpg',
       description: 'Skewers roasting over glowing coals in the tandoor.',
+    },
+  ];
+
+  const locations = [
+    {
+      slug: 'singhs_pulkveza',
+      label: "Pulkveža Brieža iela 2, Centra rajons, Rīga",
+      shortLabel: 'Pulkveža Brieža iela 2',
+    },
+    {
+      slug: 'singhs_gertrudes',
+      label: "Ģertrūdes iela 32, Centra rajons, Rīga",
+      shortLabel: 'Ģertrūdes iela 32',
     },
   ];
 
@@ -182,6 +197,7 @@ const Page = () => {
 
   const openModal = () => {
     setIsSubmitted(false);
+    setReservationCode(null);
     setIsModalOpen(true);
   };
 
@@ -213,13 +229,17 @@ const Page = () => {
           guests: parseInt(guests, 10),
           date: format(date || new Date(), 'yyyy-MM-dd'),
           time,
+          restaurantSlug: location,
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to make reservation.');
+        throw new Error(result.message || 'Failed to make reservation.');
       }
+
+      setReservationCode(result.reservation?.reservationCode || null);
 
       // Refetch availability after successful booking
       const dateString = format(date, 'yyyy-MM-dd');
@@ -670,6 +690,27 @@ const Page = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
+                    <Label htmlFor="location" className="text-gray-400">
+                      Location
+                    </Label>
+                    <Select
+                      name="location"
+                      value={location}
+                      onValueChange={setLocation}
+                    >
+                      <SelectTrigger className="w-full bg-[#2a2a2a] border-gray-600">
+                        <SelectValue placeholder="Select location" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#181818] text-white border-gray-600">
+                        {locations.map((loc) => (
+                          <SelectItem key={loc.slug} value={loc.slug}>
+                            {loc.shortLabel}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="guests" className="text-gray-400">
                       Guests
                     </Label>
@@ -805,6 +846,13 @@ const Page = () => {
                 Your table is reserved. A confirmation has been sent to you via
                 RigaEats. We look forward to welcoming you to Singh's.
               </p>
+              {reservationCode && (
+                <p className="text-gray-200 mt-4">
+                  Your reservation ID is{' '}
+                  <span className="font-mono tracking-widest text-white">{reservationCode}</span>.
+                  {' '}Please keep this for reference.
+                </p>
+              )}
               <p className="text-sm text-gray-500 mt-6">
                 This window will close automatically.
               </p>

@@ -9,6 +9,7 @@ type ReservationDetails = {
     guests: number;
     date: string;
     time: string;
+    reservationCode?: string;
 };
 
 // Function to get the Google Calendar API client
@@ -50,7 +51,7 @@ export const createCalendarEvent = async (reservation: ReservationDetails) => {
 
         const event: any = {
             summary: `Reservation: ${reservation.name} (${reservation.guests} guests)`,
-            description: `Reservation for ${reservation.guests} guest(s) made by ${reservation.name} (${reservation.email}).\nPhone: ${reservation.phone}`,
+            description: `Reservation ID: ${reservation.reservationCode ?? 'N/A'}\nReservation for ${reservation.guests} guest(s) made by ${reservation.name} (${reservation.email}).\nPhone: ${reservation.phone}`,
             start: {
                 dateTime: eventStartTime.toISOString(),
                 timeZone,
