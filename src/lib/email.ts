@@ -1,3 +1,4 @@
+// @ts-ignore - nodemailer types may not be available in CI, but runtime import is valid
 import nodemailer from 'nodemailer';
 import { createServerSupabase } from '@/lib/supabase/server';
 
