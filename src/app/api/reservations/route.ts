@@ -7,7 +7,7 @@ import { verifyToken } from '@/lib/auth';
 import { rateLimitCheck, rateLimitFail, rateLimitSuccess } from '@/lib/rate-limit';
 
 // Define the operating hours and capacity
-const operatingHours = {
+export const operatingHours = {
   // Sunday: 0, Monday: 1, ..., Saturday: 6
   0: {start: 12, end: 22}, // Sunday 12 PM - 10 PM
   1: {start: 11, end: 23}, // Monday 11 AM - 11 PM
@@ -226,17 +226,17 @@ export async function POST(req: NextRequest) {
       reservation_code: reservationCode,
       restaurant: restaurantSlug,
       calendar_status: 'Pending',
+      calendar_event_id: null,
     };
     
     // 5. Add to Google Calendar
     try {
-      await createCalendarEvent({ name, email, phone, guests, date, time, reservationCode });
+      const calendarEvent = await createCalendarEvent({ name, email, phone, guests, date, time, reservationCode });
       newReservationDB.calendar_status = 'Synced';
+      newReservationDB.calendar_event_id = calendarEvent?.id ?? null;
       console.log("Successfully added event to Google Calendar.");
     } catch (calendarError) {
       newReservationDB.calendar_status = 'Error';
-      // Log the error but don't fail the entire reservation process
-      // In a production app, you might want to add this to a retry queue
       console.error("Failed to add event to Google Calendar:", calendarError);
     }
 

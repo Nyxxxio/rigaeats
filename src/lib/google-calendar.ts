@@ -100,3 +100,52 @@ export const createCalendarEvent = async (reservation: ReservationDetails) => {
         throw new Error('Failed to create Google Calendar event.');
     }
 };
+
+export const updateCalendarEvent = async (eventId: string, reservation: ReservationDetails) => {
+    try {
+        const { calendar, calendarId } = getCalendarClient();
+        const timeZone = process.env.GOOGLE_CALENDAR_TIMEZONE || 'UTC';
+
+        const [hour, minute] = reservation.time.split(':').map(Number);
+        const eventStartTime = new Date(reservation.date);
+        eventStartTime.setUTCHours(hour, minute, 0, 0);
+        const eventEndTime = new Date(eventStartTime.getTime() + (60 * 60 * 1000));
+
+        const event: any = {
+            summary: `Reservation: ${reservation.name} (${reservation.guests} guests)`,
+            description: `Reservation ID: ${reservation.reservationCode ?? 'N/A'}\nReservation for ${reservation.guests} guest(s) made by ${reservation.name} (${reservation.email}).\nPhone: ${reservation.phone}`,
+            start: {
+                dateTime: eventStartTime.toISOString(),
+                timeZone,
+            },
+            end: {
+                dateTime: eventEndTime.toISOString(),
+                timeZone,
+            },
+        };
+
+        const response = await calendar.events.update({
+            calendarId,
+            eventId,
+            requestBody: event,
+        });
+
+        return response.data;
+    } catch (error: any) {
+        console.error('Error updating calendar event:', error?.message || String(error));
+        throw new Error('Failed to update Google Calendar event.');
+    }
+};
+
+export const cancelCalendarEvent = async (eventId: string) => {
+    try {
+        const { calendar, calendarId } = getCalendarClient();
+        await calendar.events.delete({
+            calendarId,
+            eventId,
+        });
+    } catch (error: any) {
+        console.error('Error cancelling calendar event:', error?.message || String(error));
+        // Do not throw; cancellation failures should not block app flow
+    }
+};
