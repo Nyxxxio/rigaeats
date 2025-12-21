@@ -144,7 +144,10 @@ export default function MyReservationPage() {
             <div className="text-sm text-gray-300">
               <p><span className="font-semibold">Name:</span> {reservation.name}</p>
               <p><span className="font-semibold">Email:</span> {reservation.email}</p>
-              <p><span className="font-semibold">Status:</span> {reservation.status}</p>
+              <p>
+                <span className="font-semibold">Status:</span>{' '}
+                {reservation.calendarStatus === 'Synced' ? 'Confirmed' : 'Not confirmed'}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
