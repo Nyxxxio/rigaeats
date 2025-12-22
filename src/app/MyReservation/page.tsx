@@ -9,7 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const locations = [
   {
@@ -34,6 +34,7 @@ function MyReservationPageInner() {
   const [isDateOpen, setIsDateOpen] = useState(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const performLookup = async (lookupCode: string) => {
@@ -101,10 +102,8 @@ function MyReservationPageInner() {
       toast({ title: 'Reservation updated', description: 'Your reservation changes have been saved.' });
       setShowUpdatePopup(true);
       setTimeout(() => {
-        setShowUpdatePopup(false);
-        setReservation(null);
-        setCode('');
-      }, 7000);
+        router.push('/singhs');
+      }, 2000);
     } catch (e: any) {
       toast({ variant: 'destructive', title: 'Update failed', description: e.message || 'Could not update reservation.' });
     } finally {
