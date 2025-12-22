@@ -98,6 +98,9 @@ export async function sendConfirmationEmail(payload: ConfirmationEmailPayload) {
   const guestName = reservationDetails.guestName || 'Guest';
   const reservationId = reservationDetails.reservationCode || String(reservationDetails.id);
 
+  const manageBaseUrl = process.env.MY_RESERVATION_URL || 'https://rigaeats.app/MyReservation';
+  const manageUrl = `${manageBaseUrl}?code=${encodeURIComponent(reservationId)}`;
+
   const subject = `Your table is confirmed – ${restaurantName}`;
 
   const html = `
@@ -109,6 +112,13 @@ export async function sendConfirmationEmail(payload: ConfirmationEmailPayload) {
     <h3>Reservation Details</h3>
     <p><strong>Reservation ID:</strong> ${reservationId}</p>
     <p><strong>Number of Guests:</strong> ${reservationDetails.guests}</p>
+
+    <h3>View or Modify Your Reservation</h3>
+    <p>
+      You can view or modify your reservation at any time using this link:
+      <br/>
+      <a href="${manageUrl}" target="_blank" rel="noopener noreferrer">Manage my reservation</a>
+    </p>
 
     <h3>Restaurant Information</h3>
     <p><strong>Restaurant Name:</strong> ${restaurantName}</p>

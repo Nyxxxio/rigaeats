@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'next/navigation';
 
 const locations = [
   {
@@ -33,15 +34,16 @@ export default function MyReservationPage() {
   const [isDateOpen, setIsDateOpen] = useState(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
-  const handleLookup = async () => {
-    if (!code.trim()) {
+  const performLookup = async (lookupCode: string) => {
+    if (!lookupCode.trim()) {
       toast({ variant: 'destructive', title: 'Missing code', description: 'Please enter your reservation ID.' });
       return;
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/my-reservation?code=${encodeURIComponent(code.trim())}`);
+      const res = await fetch(`/api/my-reservation?code=${encodeURIComponent(lookupCode.trim())}`);
       const body = await res.json();
       if (!res.ok) {
         throw new Error(body.message || 'Failed to find reservation.');
@@ -60,6 +62,20 @@ export default function MyReservationPage() {
       setLoading(false);
     }
   };
+
+  const handleLookup = async () => {
+    await performLookup(code);
+  };
+
+  useEffect(() => {
+    const initialCode = searchParams.get('code');
+    if (initialCode) {
+      const normalized = initialCode.toUpperCase();
+      setCode(normalized);
+      performLookup(normalized);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleUpdate = async () => {
     if (!reservation) return;
