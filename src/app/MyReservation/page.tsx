@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -22,7 +22,7 @@ const locations = [
   },
 ];
 
-export default function MyReservationPage() {
+function MyReservationPageInner() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [reservation, setReservation] = useState<any | null>(null);
@@ -264,5 +264,21 @@ export default function MyReservationPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MyReservationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#181818] text-white flex items-center justify-center px-4">
+          <div className="w-full max-w-xl bg-[#111111] border border-gray-800 rounded-2xl p-6 md:p-8 shadow-xl shadow-black/40 text-center">
+            <p className="text-gray-300">Loading your reservation...</p>
+          </div>
+        </div>
+      }
+    >
+      <MyReservationPageInner />
+    </Suspense>
   );
 }
