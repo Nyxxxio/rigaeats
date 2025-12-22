@@ -248,7 +248,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ restaurant }) => {
                                                             <div className="flex items-center gap-2">
                                                                 <a
                                                                     href={`tel:${normalizePhoneForTel(booking.phone)}`}
-                                                                    className="text-blue-400 hover:underline break-all"
+                                                                    className="text-blue-400 hover:underline whitespace-nowrap"
                                                                     title="Call"
                                                                 >
                                                                     {booking.phone}
